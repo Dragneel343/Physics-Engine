@@ -1,12 +1,15 @@
 # Shape Class
 from point import Point
 from velocity import Velocity
+from acceleration import Acceleration
 
 class Shape:
 	def __init__(self, x=0, y=0, color=(255,255,255)):
 		self.center = Point(x,y)
 		self.velocity = Velocity(0,0)
-		self.angle = 0 # orientation (NOT direction)
+		self.acceleration = Acceleration()
+
+		self.angle_degrees = 0 # orientation (NOT direction)
 		# maybe implement static vs dynamic coeff_friction later on
 		self.coeff_friction = .5
 		
@@ -30,9 +33,12 @@ class Shape:
 	def advance(self):
 		if self.check_collision():
 			self.on_collision()
+		
+		self.velocity.dx += self.acceleration.ddx
+		self.velocity.dy += self.acceleration.ddy
 
 		self.center.x += self.velocity.dx
-		self.center.y += self.velocity.dy
+		self.center.y -= self.velocity.dy  # -= for accurate visual representation. (cv2 flips y-axis)
 
 	
 

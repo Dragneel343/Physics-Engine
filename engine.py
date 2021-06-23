@@ -4,15 +4,14 @@ import cv2
 import numpy as np
 from random import randint
 from circle import Circle
+from globals import *
 
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 800
 
 class Engine:
 	def __init__(self):
 		self.objects = []
 
-		self.window_h_w_d = (SCREEN_HEIGHT,SCREEN_WIDTH,3)
+		self.window_shape = (SCREEN_HEIGHT,SCREEN_WIDTH,3)
 
 		# SAMPLE SIMULATIONS:
 		self.init_test_1()
@@ -33,7 +32,7 @@ class Engine:
 
 
 	def draw(self):
-		frame = np.zeros(self.window_h_w_d, dtype=np.uint8)
+		frame = np.zeros(self.window_shape, dtype=np.uint8)
 		for obj in self.objects:
 			obj.draw(frame)
 		cv2.imshow("Physics Engine", frame)

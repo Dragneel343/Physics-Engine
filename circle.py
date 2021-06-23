@@ -9,5 +9,6 @@ class Circle(Shape):
 		self.radius = radius
 
 	def draw(self, frame):
+		
 		frame = cv2.circle(frame, (self.center.x, self.center.y), self.radius, self.color, -1)
 		return frame
