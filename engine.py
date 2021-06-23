@@ -32,7 +32,10 @@ class Engine:
 
 
 	def draw(self):
+		# make a new black frame
 		frame = np.zeros(self.window_shape, dtype=np.uint8)
+
+		# draw each object
 		for obj in self.objects:
 			obj.draw(frame)
 		cv2.imshow("Physics Engine", frame)
@@ -40,6 +43,7 @@ class Engine:
 
 
 	def update(self):
+		# Update each object one frame
 		for obj in self.objects:
 			obj.advance()
 
