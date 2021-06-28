@@ -16,5 +16,14 @@ class Point:
 	@y.setter
 	def y(self,y):
 		self._y = int(y)
+	
+	def __iter__(self):
+		yield self.x
+		yield self.y
+
+	def __iadd__(self, vector):
+		self.x += vector.dx
+		self.y -= vector.dy # -= for accurate visual representation. (cv2 flips y-axis)
+		return self
 
 	

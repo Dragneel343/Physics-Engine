@@ -12,3 +12,8 @@ class Circle(Shape):
 		
 		frame = cv2.circle(frame, (self.center.x, self.center.y), self.radius, self.color, -1)
 		return frame
+
+	def on_collision(self):
+		# TODO
+		# Should adjust speed (magnitude of velocity) by a factor of .9 (loses some speed to simulate inelastic collision)
+		pass

@@ -22,23 +22,19 @@ class Shape:
 	def draw(self):
 		print("Draw needs to be implemented!")
 
-	def check_collision(self):
-		# print("check_collision needs to be implemented!")
-		pass
+	# def check_collision(self):
+	# 	# print("check_collision needs to be implemented!")
+	# 	pass
 
 	def on_collision(self):
 		# print("on_collision needs to be implemented!")
 		pass
 
 	def advance(self):
-		if self.check_collision():
-			self.on_collision()
 		
-		self.velocity.dx += self.acceleration.ddx
-		self.velocity.dy += self.acceleration.ddy
-
-		self.center.x += self.velocity.dx
-		self.center.y -= self.velocity.dy  # -= for accurate visual representation. (cv2 flips y-axis)
+		
+		self.velocity += self.acceleration
+		self.center += self.velocity  
 
 	
 
