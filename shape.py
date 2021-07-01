@@ -31,10 +31,8 @@ class Shape:
 		pass
 
 	def advance(self):
-		
-		
 		self.velocity += self.acceleration
-		self.center += self.velocity  
+		
 
 	
 

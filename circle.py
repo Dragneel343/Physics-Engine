@@ -17,3 +17,7 @@ class Circle(Shape):
 		# TODO
 		# Should adjust speed (magnitude of velocity) by a factor of .9 (loses some speed to simulate inelastic collision)
 		pass
+
+	def advance(self):
+		super().advance()
+		self.center += self.velocity  

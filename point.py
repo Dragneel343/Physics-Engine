@@ -1,3 +1,6 @@
+import velocity
+
+
 class Point:
 	def __init__(self,x=0,y=0):
 		self._x = x
@@ -26,4 +29,12 @@ class Point:
 		self.y -= vector.dy # -= for accurate visual representation. (cv2 flips y-axis)
 		return self
 
+	def __add__(self, vector):
+		if isinstance(vector, Point):
+			return Point(self.x + vector.x, self.y - vector.y)
+		elif isinstance(vector, Velocity):
+			return Point(self.x + vector.x, self.dy - vector.dy)
+		raise TypeError
+
+		
 	

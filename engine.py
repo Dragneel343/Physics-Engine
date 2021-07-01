@@ -39,10 +39,17 @@ class Engine:
 		poly.velocity.dx = 2
 		poly.velocity.dy = -2
 		self.objects.append(poly)
-		for i in range(150):
+
+		rect = Rectangle(300, 400, 20, 20,(255,255,255))
+		poly.velocity.dx = -.5
+		poly.velocity.dy = 7
+		self.objects.append(rect)
+
+
+		for i in range(100):
 			c = Circle(randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT),randint(15,40),(randint(0,255),randint(0,255),randint(0,255)))
 			c.velocity.dx = randint(-3,3)
-			c.velocity.dy = randint(-3,3)
+			c.velocity.dy = randint(-1,3)
 			self.objects.append(c)
 
 	def run(self):
@@ -71,11 +78,12 @@ class Engine:
 
 	def check_collisions(self):
 		# Non-optimized collision checking - O(n^2) performance
-		for obj1 in self.objects:
-			for obj2 in self.objects:
-				if obj1 == obj2:
-					break
-				self.collision_dict[(type(obj1),type(obj2))](obj1,obj2)
+		# for obj1 in self.objects:
+		# 	for obj2 in self.objects:
+		# 		if obj1 == obj2:
+		# 			break
+		# 		self.collision_dict[(type(obj1),type(obj2))](obj1,obj2)
+		pass
 
 
 	def poly_poly_check(self, poly1, poly2):

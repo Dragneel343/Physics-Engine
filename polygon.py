@@ -19,13 +19,16 @@ class Polygon(Shape):
 		
 
 	def draw(self, frame):
-		pts = np.array([list(p) for p in self.point_vector], np.int32)
+		pts = self.get_np_array()
 		pts = pts.reshape((-1,1,2))
 		frame = cv2.polylines(frame, [pts], True, self.color, self.line_width)
 		return frame
 
+	def get_np_array(self):
+		return np.array([list(p) for p in self.point_vector], np.int32)
+
 	def advance(self):
-		
+		super().advance()
 		for p in self.point_vector:
 			p += self.velocity
 			
