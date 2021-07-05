@@ -1,4 +1,4 @@
-import velocity
+from velocity import Velocity
 
 
 class Point:
@@ -8,33 +8,36 @@ class Point:
 
 	@property
 	def x(self):
-		return self._x
+		return int(self._x)
 	@x.setter
 	def x(self,x):
-		self._x = int(x)
+		self._x = x
 
 	@property
 	def y(self):
-		return self._y
+		return int(self._y)
 	@y.setter
 	def y(self,y):
-		self._y = int(y)
+		self._y = y
 	
 	def __iter__(self):
 		yield self.x
 		yield self.y
 
 	def __iadd__(self, vector):
-		self.x += vector.dx
-		self.y -= vector.dy # -= for accurate visual representation. (cv2 flips y-axis)
+		self._x += vector.dx
+		self._y -= vector.dy # -= for accurate visual representation. (cv2 flips y-axis)
 		return self
 
 	def __add__(self, vector):
 		if isinstance(vector, Point):
-			return Point(self.x + vector.x, self.y - vector.y)
+			return Point(self._x + vector.x, self._y - vector.y)
 		elif isinstance(vector, Velocity):
-			return Point(self.x + vector.x, self.dy - vector.dy)
+			return Point(self._x + vector.x, self._y - vector.dy)
 		raise TypeError
+
+	def __repr__(self):
+		return f"({self.x},{self.y})"
 
 		
 	

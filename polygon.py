@@ -31,5 +31,22 @@ class Polygon(Shape):
 		super().advance()
 		for p in self.point_vector:
 			p += self.velocity
+
+	def get_left(self):
+		temp = [p.x for p in self.point_vector]
+		return min(temp)
+	
+	def get_right(self):
+		temp = [p.x for p in self.point_vector]
+		return max(temp)
+	
+	def get_top(self):
+		temp = [p.y for p in self.point_vector]
+		return min(temp)
+	
+	def get_bot(self):
+		temp = [p.y for p in self.point_vector]
+		return max(temp)
+	
 			
 		

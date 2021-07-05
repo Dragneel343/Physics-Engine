@@ -20,15 +20,29 @@ class Shape:
 
 
 	def draw(self):
-		print("Draw needs to be implemented!")
+		print("Error: draw method not over-ridden!")
 
-	# def check_collision(self):
-	# 	# print("check_collision needs to be implemented!")
-	# 	pass
-
+	
 	def on_collision(self):
 		# print("on_collision needs to be implemented!")
 		pass
+
+	def on_wall_collision(self, col_type):
+		
+		if col_type == 'v':
+			if abs(self.velocity.dy) <=.1:
+				self.velocity.dy = 0
+				self.acceleration.ddy = 0 
+			else:
+				self.velocity.dy *= -.85
+		elif col_type == 'h':
+			if abs(self.velocity.dx) <= .1:
+				self.velocity.dx = 0
+				self.acceleration.ddx = 0 
+			else:
+				self.velocity.dx *= -.85
+		else:
+			print("ERROR: Invalid collision type (col_type) for on_wall_collision")
 
 	def advance(self):
 		self.velocity += self.acceleration

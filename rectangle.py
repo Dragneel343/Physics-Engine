@@ -30,7 +30,21 @@ class Rectangle(Polygon): # inherit Polygon?
 
 
 	def advance(self):
+		# call the Polygon's super class advance method (shape)
 		super(Polygon, self).advance()
 		self.center += self.velocity
+		
 
+	def get_left(self):
+		return int(self.center.x - (self.width/2))
+	
+	def get_right(self):
+		return int(self.center.x + (self.width/2))
+	
+	def get_top(self):
+		return int(self.center.y - (self.height/2))
+	
+	def get_bot(self):
+		return int(self.center.y + (self.height/2))
+	
 		
