@@ -16,7 +16,7 @@ class Circle(Shape):
 	def on_collision(self):
 		# TODO
 		# Should adjust speed (magnitude of velocity) by a factor of .9 (loses some speed to simulate inelastic collision)
-		pass
+		super().on_collision()
 
 	
 

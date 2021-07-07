@@ -25,7 +25,7 @@ class Shape:
 	
 	def on_collision(self):
 		# print("on_collision needs to be implemented!")
-		pass
+		self.color = (255,255,255)
 
 	def on_wall_collision(self, col_type):
 		

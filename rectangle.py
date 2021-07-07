@@ -14,7 +14,7 @@ class Rectangle(Polygon): # inherit Polygon?
 	def __init__(self, x, y, height, width, color=(100,200,100), line_width=5):
 		self.height = height
 		self.width = width
-		super().__init__((None, None, None, None), color, line_width, x, y)
+		super().__init__((None,), color, line_width, x, y)
 
 		p1 = Point((height//2), (height//2))
 		p2 = Point(-(height//2), (height//2))
@@ -33,7 +33,9 @@ class Rectangle(Polygon): # inherit Polygon?
 		# call the Polygon's super class advance method (shape)
 		super(Polygon, self).advance()
 		self.center += self.velocity
-		
+	
+	def get_point_vector(self):
+		return [self.center + p for p in self._point_offsets]
 
 	def get_left(self):
 		return int(self.center.x - (self.width/2))
@@ -47,4 +49,5 @@ class Rectangle(Polygon): # inherit Polygon?
 	def get_bot(self):
 		return int(self.center.y + (self.height/2))
 	
+
 		
