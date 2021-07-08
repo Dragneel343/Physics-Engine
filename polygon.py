@@ -2,6 +2,7 @@ from shape import Shape
 import cv2
 import numpy as np
 
+
 class Polygon(Shape):
 	"""
 	POLYGON:
@@ -14,7 +15,7 @@ class Polygon(Shape):
 		super().__init__(x=x, y=y, color=color)
 		self.line_width = line_width
 		self.point_vector = point_vector
-		if len(self.point_vector) < 3:
+		if len(self.point_vector) < 3 and self.point_vector[0] != None:
 			raise ValueError("Expected tuple of length three of greater")
 		
 
@@ -31,5 +32,25 @@ class Polygon(Shape):
 		super().advance()
 		for p in self.point_vector:
 			p += self.velocity
+
+	def get_left(self):
+		temp = [p.x for p in self.point_vector]
+		return min(temp)
+	
+	def get_right(self):
+		temp = [p.x for p in self.point_vector]
+		return max(temp)
+	
+	def get_top(self):
+		temp = [p.y for p in self.point_vector]
+		return min(temp)
+	
+	def get_bot(self):
+		temp = [p.y for p in self.point_vector]
+		return max(temp)
+
+	def get_point_vector(self):
+		return self.point_vector
+	
 			
 		
