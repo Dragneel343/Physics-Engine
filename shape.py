@@ -25,11 +25,15 @@ class Shape:
 	
 	def on_collision(self):
 		# print("on_collision needs to be implemented!")
-		self.color = (255,255,255)
+		if self.color == (255,255,255):
+			self.color = (200,100,100)
+		else:
+			self.color = (255,255,255)
 
 	def on_wall_collision(self, col_type):
 		
 		if col_type == 'v':
+			# prevent rolling objects from sinking into floor
 			if abs(self.velocity.dy) <=.1:
 				self.velocity.dy = 0
 				self.acceleration.ddy = 0 
