@@ -1,8 +1,11 @@
 # the Engine
 
+from usershape import UserShape
 import cv2
 import numpy as np
 import math
+import pynput
+from pynput import keyboard
 from random import randint
 from circle import Circle
 from polygon import Polygon
@@ -14,8 +17,9 @@ from globals import *
 
 
 class Engine:
-    def __init__(self):
-        self.objects = []
+	def __init__(self):
+		self.userobject = UserShape(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,25)
+		self.objects = []
 
 		self.window_shape = (SCREEN_HEIGHT,SCREEN_WIDTH,3)
 		self.wall = Wall(SCREEN_WIDTH,SCREEN_HEIGHT)
@@ -31,8 +35,8 @@ class Engine:
 			
 		}
 
-        # SAMPLE SIMULATIONS:
-        self.init_test_1()
+		# SAMPLE SIMULATIONS:
+		self.init_test_1()
 
 
 
@@ -62,44 +66,55 @@ class Engine:
 			self.objects.append(c)
 
 	def run(self):
-		for i in range(1200):
+		for i in range(500):
 			self.update()
 			self.draw()
 
 
-    def draw(self):
-        # make a new black frame
-        frame = np.zeros(self.window_shape, dtype=np.uint8)
+	def draw(self):
+		# make a new black frame
+		frame = np.zeros(self.window_shape, dtype=np.uint8)
+		self.userobject.draw(frame)
 
-        # draw each object
-        for obj in self.objects:
-            obj.draw(frame)
-        cv2.imshow("Physics Engine", frame)
-        cv2.waitKey(1)
+		# draw each object
+		for obj in self.objects:
+			obj.draw(frame)
+		cv2.imshow("Physics Engine", frame)
+		cv2.waitKey(17)
 
 
 	def update(self):
+		with keyboard.Events() as events:
+		# Block at most one second
+			event = events.get(.1)
+			if event is not None:
+				self.userobject.Movement(event)
+			# else:
+			# 	print('Received event {}'.format(event))
+
 		# Update each object one frame
 		self.check_collisions()
 		for obj in self.objects:
 			obj.advance()
 
-        self.check_collisions()
+		
 
-    def check_collisions(self):
-        # Non-optimized collision checking - O(n^2) performance
-        tested = set(())
-        for obj1 in self.objects:
-             for obj2 in self.objects:
-                 tested.add((obj2, obj1))
-                 #frozen = frozenset(pair)
-                 if (obj1, obj2) in tested:
-                     break
-                 if obj1 == obj2:
-                     break
-                 self.collision_dict[(type(obj1),type(obj2))](obj1,obj2)
-                 #tested.add(frozen)
-        pass
+
+
+	def check_collisions(self):
+		# Non-optimized collision checking - O(n^2) performance
+		tested = set(())
+		for obj1 in self.objects:
+			 for obj2 in self.objects:
+				 tested.add((obj2, obj1))
+				 #frozen = frozenset(pair)
+				 if (obj1, obj2) in tested:
+					 break
+				 if obj1 == obj2:
+					 break
+				 self.collision_dict[(type(obj1),type(obj2))](obj1,obj2)
+				 #tested.add(frozen)
+		pass
 
 	def obj_wall_check(self, obj1):
 		# Check horizontal collision
@@ -109,9 +124,9 @@ class Engine:
 		if ( (obj1.get_bot() >= self.wall.height) and (obj1.velocity.dy < 0) ) or ( (obj1.get_top() <= 0) and (obj1.velocity.dy > 0)):
 			obj1.on_wall_collision(col_type='v')
 
-    def poly_poly_check(self, poly1, poly2):
-        # Collision check between two polygons
-        pass
+	def poly_poly_check(self, poly1, poly2):
+		# Collision check between two polygons
+		pass
 
 	def poly_circ_check(self, poly, circ):
 		# Collision check between circle and polygon
@@ -179,39 +194,39 @@ class Engine:
 		dy = p1.y - p2.y
 		return ( dx**2 + dy**2) ** .5
 
-    def circ_circ_check(self, circ1, circ2):
-        
-        #Checks bounding boxes around circles. 
-        #Formula taken from https://gamedevelopment.tutsplus.com/tutorials/when-worlds-collide-simulating-circle-circle-collisions--gamedev-769
-        if (circ1.center.x + circ1.radius + circ2.center.x > circ2.center.x
-            and circ1.center.x < circ2.center.x + circ1.radius + circ2.radius
-            and circ1.center.y + circ1.center.y + circ2.radius > circ2.center.y
-            and circ1.center.y < circ2.center.y + circ1.radius + circ2.radius):
-        
-            # This formula is also the same as the article, but we came to it on our own. 
-            # Collision check between two circles
-            x = circ1.center.x - circ2.center.x
-            y = circ1.center.y - circ2.center.y
-            distance = math.sqrt((x**2 + y**2))
-            
-            #If circles are colliding
-            if (distance <= circ1.radius + circ2.radius):
-                newVelocity1x = (circ1.velocity.dx * (circ1.radius - circ2.radius) + (2 * circ2.radius * circ2.velocity.dx)) / (circ1.radius + circ2.radius)
-                newVelocity2x = (circ2.velocity.dx * (circ2.radius - circ1.radius) + (2 * circ1.radius * circ1.velocity.dx)) / (circ2.radius + circ1.radius)
-                newVelocity1y = (circ1.velocity.dy * (circ1.radius - circ2.radius) + (2 * circ2.radius * circ2.velocity.dy)) / (circ1.radius + circ2.radius)
-                newVelocity2y = (circ2.velocity.dy * (circ2.radius - circ1.radius) + (2 * circ1.radius * circ1.velocity.dx)) / (circ2.radius + circ1.radius)
+	def circ_circ_check(self, circ1, circ2):
+		
+		#Checks bounding boxes around circles. 
+		#Formula taken from https://gamedevelopment.tutsplus.com/tutorials/when-worlds-collide-simulating-circle-circle-collisions--gamedev-769
+		if (circ1.center.x + circ1.radius + circ2.center.x > circ2.center.x
+			and circ1.center.x < circ2.center.x + circ1.radius + circ2.radius
+			and circ1.center.y + circ1.center.y + circ2.radius > circ2.center.y
+			and circ1.center.y < circ2.center.y + circ1.radius + circ2.radius):
+		
+			# This formula is also the same as the article, but we came to it on our own. 
+			# Collision check between two circles
+			x = circ1.center.x - circ2.center.x
+			y = circ1.center.y - circ2.center.y
+			distance = math.sqrt((x**2 + y**2))
+			
+			#If circles are colliding
+			if (distance <= circ1.radius + circ2.radius):
+				newVelocity1x = (circ1.velocity.dx * (circ1.radius - circ2.radius) + (2 * circ2.radius * circ2.velocity.dx)) / (circ1.radius + circ2.radius)
+				newVelocity2x = (circ2.velocity.dx * (circ2.radius - circ1.radius) + (2 * circ1.radius * circ1.velocity.dx)) / (circ2.radius + circ1.radius)
+				newVelocity1y = (circ1.velocity.dy * (circ1.radius - circ2.radius) + (2 * circ2.radius * circ2.velocity.dy)) / (circ1.radius + circ2.radius)
+				newVelocity2y = (circ2.velocity.dy * (circ2.radius - circ1.radius) + (2 * circ1.radius * circ1.velocity.dx)) / (circ2.radius + circ1.radius)
 
-                circ1.velocity.dx = newVelocity1x 
-                circ1.velocity.dy = newVelocity1y
-                circ2.velocity.dx = newVelocity2x
-                circ2.velocity.dy = newVelocity2y
-            
-                circ1.advance()
-                circ2.advance()
-        
-        # !!!___TODO___!!! 
-        # This should be the easiest to implement and could be implemented immediately
-        pass
+				circ1.velocity.dx = newVelocity1x 
+				circ1.velocity.dy = newVelocity1y
+				circ2.velocity.dx = newVelocity2x
+				circ2.velocity.dy = newVelocity2y
+			
+				circ1.advance()
+				circ2.advance()
+		
+		# !!!___TODO___!!! 
+		# This should be the easiest to implement and could be implemented immediately
+		pass
 
 
 
