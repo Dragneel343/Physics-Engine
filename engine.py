@@ -1,8 +1,11 @@
 # the Engine
 
+from usershape import UserShape
 import cv2
 import numpy as np
 import math
+import pynput
+from pynput import keyboard
 from random import randint
 from circle import Circle
 from polygon import Polygon
@@ -15,6 +18,7 @@ from globals import *
 
 class Engine:
 	def __init__(self):
+		self.userobject = UserShape(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,25)
 		self.objects = []
 
 		self.window_shape = (SCREEN_HEIGHT,SCREEN_WIDTH,3)
@@ -66,12 +70,6 @@ class Engine:
 			self.update()
 			self.draw()
 
-	def run_test_2(self):
-		self.init_test_2()
-		for i in range(800):
-			self.update()
-			self.draw()
-
 	def run(self):
 		for i in range(800):
 			self.update()
@@ -81,6 +79,7 @@ class Engine:
 	def draw(self):
 		# make a new black frame
 		frame = np.zeros(self.window_shape, dtype=np.uint8)
+		self.userobject.draw(frame)
 
 		# draw each object
 		for obj in self.objects:
@@ -90,6 +89,14 @@ class Engine:
 
 
 	def update(self):
+		# Updates User Movement
+		with keyboard.Events() as events:
+			event = events.get(.1)
+			if event is not None:
+				self.userobject.Movement(event)
+			# else:
+			# 	print('Received event {}'.format(event))
+
 		# Update each object one frame
 		self.check_collisions()
 		for obj in self.objects:
@@ -289,7 +296,6 @@ class Engine:
 			return True
 		return False
 				
-
 
 
 eng = Engine()
