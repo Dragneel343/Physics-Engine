@@ -84,8 +84,8 @@ class Engine:
 
 
 	def update(self):
+		# Updates User Movement
 		with keyboard.Events() as events:
-		# Block at most one second
 			event = events.get(.1)
 			if event is not None:
 				self.userobject.Movement(event)
