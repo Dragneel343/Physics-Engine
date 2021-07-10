@@ -3,16 +3,18 @@
 from shape import Shape
 from random import randint
 import cv2
+from globals import SCREEN_HEIGHT, IDs
 
 class Circle(Shape):
-    def __init__(self, x=0, y=0, radius=5, color=(255,255,255)):
-        super().__init__(x=x, y=y, color=color)
-        self.radius = radius
+	def __init__(self, x=0, y=0, radius=5, color=(255,255,255)):
+		super().__init__(x=x, y=y, color=color)
+		self.radius = radius
+		
 
-    def draw(self, frame):
-        
-        frame = cv2.circle(frame, (self.center.x, self.center.y), self.radius, self.color, -1)
-        return frame
+	def draw(self, frame):
+		
+		frame = cv2.circle(frame, (self.center.x, self.center.y), self.radius, self.color, -1)
+		return frame
 
 	def on_collision(self):
 		# TODO
@@ -24,6 +26,8 @@ class Circle(Shape):
 	def advance(self):
 		super().advance()
 		self.center += self.velocity
+		if self.center.y + self.radius >= SCREEN_HEIGHT:
+			self.center.y = SCREEN_HEIGHT - self.radius
 
 	def get_left(self):
 		return self.center.x - self.radius
@@ -36,4 +40,9 @@ class Circle(Shape):
 	
 	def get_bot(self):
 		return self.center.y + self.radius
+	
+	@property
+	def mass(self):
+		return 1 # self.radius * 3
+
 	

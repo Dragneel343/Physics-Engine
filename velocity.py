@@ -1,4 +1,5 @@
 from acceleration import Acceleration
+from globals import GRAVITY
 class Velocity:
 	def __init__(self, dx, dy):
 		self.dx = dx
@@ -11,3 +12,5 @@ class Velocity:
 			return self
 		else:
 			raise ValueError
+	
+	

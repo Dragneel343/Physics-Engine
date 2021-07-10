@@ -33,7 +33,7 @@ class Point:
 		if isinstance(vector, Point):
 			return Point(self._x + vector.x, self._y - vector.y)
 		elif isinstance(vector, Velocity):
-			return Point(self._x + vector.x, self._y - vector.dy)
+			return Point(self._x + vector.dx, self._y - vector.dy)
 		raise TypeError
 
 	def __repr__(self):
