@@ -9,6 +9,7 @@ class Circle(Shape):
 	def __init__(self, x=0, y=0, radius=5, color=(255,255,255)):
 		super().__init__(x=x, y=y, color=color)
 		self.radius = radius
+		self._mass = None
 
 	def draw(self, frame):
 		frame = cv2.circle(frame, (self.center.x, self.center.y), self.radius, self.color, -1)
@@ -41,6 +42,12 @@ class Circle(Shape):
 	
 	@property
 	def mass(self):
-		return 1 # self.radius * 3
+		if self._mass == None:
+			return self.radius * 2
+		else:
+			return self._mass
+	@mass.setter
+	def mass(self,mass):
+		self._mass = mass
 
 	
