@@ -91,7 +91,7 @@ class Engine:
 	def update(self):
 		# Updates User Movement
 		with keyboard.Events() as events:
-			event = events.get(.1)
+			event = events.get(.17)
 			if event is not None:
 				self.userobject.Movement(event)
 			# else:
@@ -101,10 +101,7 @@ class Engine:
 		self.check_collisions()
 		for obj in self.objects:
 			obj.advance()
-
-		
-
-		
+			
 
 	def check_collisions(self):
 		# Non-optimized collision checking - O(n^2) performance
@@ -126,6 +123,8 @@ class Engine:
 						was_checked.add(obj2)
 					total += 1
 			self.obj_wall_check(obj1)
+			self.collision_dict[ ( type(obj1), Circle ) ](obj1,self.userobject)
+		self.obj_wall_check(self.userobject)
 
 		was_checked = None
 		# print(total)

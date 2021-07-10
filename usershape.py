@@ -10,8 +10,8 @@ from pynput import keyboard
 class UserShape(Circle):
     def __init__(self, x=0, y=0, radius=5, color=(255,255,255)):
         super().__init__(x=x, y=y,radius = radius, color=color)
-        self.acceleration.ddy = 0
-        self.mass = 1000000
+        self.acceleration.ddy == 0
+        self.mass == 1000000
 
     def Movement(self,event):
         # print('Received event {}'.format(event.key))
