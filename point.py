@@ -36,6 +36,11 @@ class Point:
 			return Point(self._x + vector.dx, self._y - vector.dy)
 		raise TypeError
 
+	def __isub__(self, vector):
+		self._x -= vector.dx
+		self._y += vector.dy # -= for accurate visual representation. (cv2 flips y-axis)
+		return self
+
 	def __repr__(self):
 		return f"({self.x},{self.y})"
 	

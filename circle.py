@@ -2,14 +2,15 @@
 # Hey Guys
 from shape import Shape
 from random import randint
+import point
 import cv2
 from globals import SCREEN_HEIGHT, IDs
 
 class Circle(Shape):
-	def __init__(self, x=0, y=0, radius=5, color=(255,255,255)):
-		super().__init__(x=x, y=y, color=color)
+	def __init__(self, x=0, y=0, radius=5, color=(255,255,255), mass=None):
+		super().__init__(x=x, y=y, color=color, mass=mass)
 		self.radius = radius
-		self._mass = None
+		
 
 	def draw(self, frame):
 		frame = cv2.circle(frame, (self.center.x, self.center.y), self.radius, self.color, -1)
@@ -46,6 +47,7 @@ class Circle(Shape):
 			return self.radius * 2
 		else:
 			return self._mass
+
 	@mass.setter
 	def mass(self,mass):
 		self._mass = mass
