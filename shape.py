@@ -43,21 +43,17 @@ class Shape:
 			self.color = (255,255,255)
 
 	def on_wall_collision(self, col_type, wall):
-		if self.center.y >= wall.height:
-			self.center.y -= self.velocity.dy
 		if col_type == 'v':
 			# prevent rolling objects from sinking into floor
 			if abs(self.velocity.dy) <=.25:
 				self.velocity.dy = 0
-				# self.acceleration.ddy = 0 
 			else:
-				self.velocity.dy *= -.9
+				self.velocity.dy *= -.8
 		elif col_type == 'h':
 			if abs(self.velocity.dx) <= .25:
 				self.velocity.dx = 0
-				# self.acceleration.ddx = 0 
 			else:
-				self.velocity.dx *= -.9
+				self.velocity.dx *= -.8
 		else:
 			print("ERROR: Invalid collision type (col_type) for on_wall_collision")
 

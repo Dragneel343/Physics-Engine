@@ -13,6 +13,7 @@ from rectangle import Rectangle
 from point import Point
 from wall import Wall
 from point import Point
+from velocity import Velocity
 from globals import *
 
 
@@ -34,8 +35,6 @@ class Engine:
 			(Circle, Circle) : self.circ_circ_check
 		}
 
-		# # SAMPLE SIMULATIONS:
-		# self.init_test_1()
 
 
 
@@ -57,8 +56,8 @@ class Engine:
 		# rect.velocity.dy = 7
 		# self.objects.append(rect)
 		# Circles
-		for i in range(8):
-			c = Circle(randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT),randint(20,35),(randint(0,255),randint(0,255),randint(0,255)))
+		for i in range(20):
+			c = Circle(randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT),randint(15,25),(randint(0,255),randint(0,255),randint(0,255)))
 			c.velocity.dx = randint(-10,10)
 			c.velocity.dy = randint(-1,10)
 			self.objects.append(c)
@@ -66,7 +65,7 @@ class Engine:
 
 	def run_test_1(self):
 		self.init_test_1()
-		for i in range(500):
+		for i in range(200):
 			self.update()
 			self.draw()
 
@@ -77,18 +76,28 @@ class Engine:
 
 
 	def draw(self):
+		"""
+		Using cv2 draws a new frame
+		"""
 		# make a new black frame
 		frame = np.zeros(self.window_shape, dtype=np.uint8)
-		self.userobject.draw(frame)
-
+		
 		# draw each object
 		for obj in self.objects:
 			obj.draw(frame)
+		# draw user controlled object 
+		# self.userobject.draw(frame)
+	
 		cv2.imshow("Physics Engine", frame)
-		cv2.waitKey(17)
+		# draws frame approximately 60 times per second (once every 17 milliseconds)
+		cv2.waitKey(30)
 
 
 	def update(self):
+		"""
+		Updates the simulation one frame at a time.
+		"""
+
 		# Updates User Movement
 		# with keyboard.Events() as events:
 		# 	event = events.get(.17)
@@ -96,40 +105,60 @@ class Engine:
 		# 		self.userobject.Movement(event)
 		# 	# else:
 			# 	print('Received event {}'.format(event))
-
-		# Update each object one frame
-		
 		for obj in self.objects:
 			obj.advance()
 		self.check_collisions()
 
 	def check_collisions(self):
-		# Non-optimized collision checking - O(n^2) performance
+		# Non-optimized collision checking ~O(n^2) performance
 		
 		for i in range(len(self.objects)):
 			obj1 = self.objects[i]
-			if not obj1.has_collided:
-				for j in range(i+1,len(self.objects)):
-					obj2 = self.objects[j]
-					if not obj2.has_collided:
-					
-						if self.collision_dict[ ( type(obj1), type(obj2) ) ](obj1,obj2):
-							obj1.has_collided = True
-							obj2.has_collided = True
 			self.obj_wall_check(obj1)
-			self.collision_dict[ ( type(obj1), Circle ) ](obj1,self.userobject)
-		self.obj_wall_check(self.userobject)
+			# if not obj1.has_collided:
+			for j in range(i+1,len(self.objects)):
+				obj2 = self.objects[j]
+				# if not obj2.has_collided:
+			
+				if self.collision_dict[ ( type(obj1), type(obj2) ) ](obj1,obj2):
+					obj1.has_collided = True
+					obj2.has_collided = True
+			# self.obj_wall_check(obj1)
+			# self.collision_dict[ ( type(obj1), Circle ) ](obj1,self.userobject)
+		# self.obj_wall_check(self.userobject)
 
 
-		
-		
 
 	def obj_wall_check(self, obj1):
+		"""
+		Checks if object is in collision with wall and moves object from overlapping with wall.
+		TODO: Modularize this function
+		"""
 		# Check horizontal collision
-		if ( (obj1.get_left() <= 0) and (obj1.velocity.dx < 0) ) or ( (obj1.get_right() >= self.wall.width) and (obj1.velocity.dx > 0) ):
+		if (obj1.get_left() <= 0) and (obj1.velocity.dx < 0):
+			wall_point = Point(0, obj1.center.y)
+			while self._get_distance_between_points(wall_point, obj1.center) < abs(obj1.get_right() - obj1.get_left()) / 2:
+				obj1.center -= obj1.velocity * .05
 			obj1.on_wall_collision(col_type='h', wall=self.wall)
+
+		elif (obj1.get_right() >= self.wall.width) and (obj1.velocity.dx > 0):
+			wall_point = Point(self.wall.width, obj1.center.y)
+			while self._get_distance_between_points(wall_point, obj1.center) < abs(obj1.get_right() - obj1.get_left()) / 2:
+				obj1.center -= obj1.velocity * .05
+			obj1.on_wall_collision(col_type='h', wall=self.wall)
+		
 		# Check vertical collision
-		if ( (obj1.get_bot() >= self.wall.height) and (obj1.velocity.dy < 0) ) or ( (obj1.get_top() <= 0) and (obj1.velocity.dy > 0)):
+		if (obj1.get_bot() >= self.wall.height) and (obj1.velocity.dy < 0):
+			#(obj1.get_top() <= 0) and (obj1.velocity.dy > 0)):
+			wall_point = Point(obj1.center.x, self.wall.height)
+			while self._get_distance_between_points(wall_point, obj1.center) < abs(obj1.get_top() - obj1.get_bot()) / 2:
+				obj1.center -= obj1.velocity * .05
+			obj1.on_wall_collision(col_type='v', wall=self.wall)
+
+		elif (obj1.get_top() <= 0) and (obj1.velocity.dy > 0):
+			wall_point = Point(obj1.center.x, 0)
+			while self._get_distance_between_points(wall_point, obj1.center) < abs(obj1.get_top() - obj1.get_bot()) / 2:
+				obj1.center -= obj1.velocity * .05
 			obj1.on_wall_collision(col_type='v', wall=self.wall)
 
 	def poly_poly_check(self, poly1, poly2):
@@ -167,10 +196,6 @@ class Engine:
 		
 		if self._point_circ_check(p1, circ) or self._point_circ_check(p2, circ):
 			return True
-
-		# dx = p1.x - p2.x
-		# dy = p1.y - p2.y
-		# line_len = ( dx**2 + dy**2) ** .5
 	
 		line_len = self._get_distance_between_points(p1, p2)
 
@@ -188,11 +213,6 @@ class Engine:
 			
 			if self._point_line_check(p1, p2, closest):
 				return True
-		# print("maybe true")
-		# print(circ.center, p1, p2)
-		# print(closest)
-		# print()
-		# return True
 		return False
 		
 
@@ -220,7 +240,7 @@ class Engine:
 		dy = p1.y - p2.y
 		return ( (dx**2) + (dy**2) ) ** .5
 
-	def circ_circ_check(self, circ1, circ2, efficiency=.9):
+	def circ_circ_check(self, circ1, circ2, efficiency=.8):
 		# This formula is also the same as the article, but we came to it on our own. 
 		# Collision check between two circles
 		# x = circ1.center.x - circ2.center.x
@@ -229,11 +249,19 @@ class Engine:
 		distance = self._get_distance_between_points(circ1.center, circ2.center)
 		if distance <= circ1.radius + circ2.radius:
 		#If circles are colliding
-			while distance < circ1.radius + circ2.radius:
+			
+			prev_center1 = Point(circ1.center.x, circ1.center.y) + (circ1.velocity * -1)
+			prev_center2 = Point(circ2.center.x, circ2.center.y) + (circ2.velocity * -1)
+
+			while (distance < circ1.radius + circ2.radius): # and not ( 
+				# (circ1.center.x == prev_center1.x and circ1.center.y == prev_center1.y) 
+				# or 
+				# (circ2.center.x == prev_center2.x and circ2.center.y == prev_center2.y) 
+				# ):
+				
 				circ1.center -= circ1.velocity * .05
 				circ2.center -= circ2.velocity * .05
 				distance = self._get_distance_between_points(circ1.center, circ2.center)
-
 
 			# move circles from overlapped position
 			# mid_x = (circ1.center.x + circ2.center.x) / 2
@@ -242,12 +270,11 @@ class Engine:
 			# 	distance = .001
 				
 			
-			# Calculate new velocity4
-			normal_x = (circ1.center.x - circ2.center.x) / distance
-			normal_y = (circ1.center.y - circ2.center.y) / distance
-
-			# normal_x = mid_x
-			# normal_y = mid_y
+			# Calculate new velocity
+			# This code was based the dynamic collision in this project:
+			#    - https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Balls2.cpp
+			normal_x = (circ2.center.x - circ1.center.x) / distance
+			normal_y = -(circ2.center.y - circ1.center.y) / distance
 			
 			tan_x = -normal_y
 			tan_y = normal_x
@@ -258,8 +285,8 @@ class Engine:
 			dot_norm_1 = circ1.velocity.dx * normal_x + circ1.velocity.dy * normal_y
 			dot_norm_2 = circ2.velocity.dx * normal_x + circ2.velocity.dy * normal_y
 			
-			moment_1 = efficiency * (dot_norm_1 * (circ1.mass - circ2.mass) + 2 * circ2.mass * dot_norm_2) / (circ1.mass + circ2.mass)
-			moment_2 = efficiency * (dot_norm_2 * (circ2.mass - circ1.mass) + 2 * circ1.mass * dot_norm_1) / (circ1.mass + circ2.mass)
+			moment_1 = efficiency * (dot_norm_1 * (circ1.mass - circ2.mass) + (2 * circ2.mass * dot_norm_2)) / (circ1.mass + circ2.mass)
+			moment_2 = efficiency * (dot_norm_2 * (circ2.mass - circ1.mass) + (2 * circ1.mass * dot_norm_1)) / (circ1.mass + circ2.mass)
 
 			# if abs(circ1.velocity.dy) < .15 and abs(circ2.velocity.dy) < .15:
 			# 	circ1.center.y = mid_y + (circ1.radius * y) / distance
@@ -280,23 +307,11 @@ class Engine:
 			# circ2.center.x = mid_x + (circ2.radius * -x) / distance
 			# circ2.center.y = mid_y + (circ2.radius * -y) / distance
 
-
 			circ1.velocity.dx = tan_x * dot_tan_1 + normal_x * moment_1
 			circ1.velocity.dy = tan_y * dot_tan_1 + normal_y * moment_1
 			circ2.velocity.dx = tan_x * dot_tan_2 + normal_x * moment_2
 			circ2.velocity.dy = tan_y * dot_tan_2 + normal_y * moment_2
-			
-			# circ1.velocity.dx = 0
-			# circ1.velocity.dy = 0
-			# circ2.velocity.dx = 0
-			# circ2.velocity.dy = 0
-
-			# circ1.center -= circ1.velocity
-			# circ2.center -= circ2.velocity
-			
-			
-			# circ1.has_collided = True
-			# circ2.has_collided = True		
+				
 			return True
 		return False
 				
