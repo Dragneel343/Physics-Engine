@@ -133,6 +133,8 @@ class Engine:
         if ( (obj1.get_bot() >= self.wall.height) and (obj1.velocity.dy < 0) ) or ( (obj1.get_top() <= 0) and (obj1.velocity.dy > 0)):
             obj1.on_wall_collision(col_type='v', wall=self.wall)
         
+        #This block of code sets the positions back to the right side of the wall.
+        #This is what fixes balls being pushed through the floor by other balls.
         while (obj1.get_left() <= 0):
             obj1.center.x += 1
         while (obj1.get_right() >= self.wall.width):
@@ -239,6 +241,7 @@ class Engine:
         distance = self._get_distance_between_points(circ1.center, circ2.center)
         if distance <= circ1.radius + circ2.radius:
         #If circles are colliding
+            #Fixes balls sticking and moving through each other
             while distance < circ1.radius + circ2.radius:
                 if circ1.center.x > circ2.center.x:
                     circ1.center.x = circ1.center.x + 1
@@ -253,27 +256,6 @@ class Engine:
                     circ1.center.y = circ1.center.y + 1
                     circ2.center.y = circ2.center.y - 1
                     
-                while (circ1.get_left() <= 0):
-                    circ1.center.x += 1
-                while (circ1.get_right() >= self.wall.width):
-                    circ1.center.x -= 1
-                while (circ1.get_top() <= 0):
-                    circ1.center.y += 1
-                while (circ1.get_bot() >= self.wall.height):
-                    circ1.center.y -= 1
-                    
-                while (circ2.get_left() <= 0):
-                    circ2.center.x += 1
-                while (circ2.get_right() >= self.wall.width):
-                    circ2.center.x -= 1
-                while (circ2.get_top() <= 0):
-                    circ2.center.y += 1
-                while (circ2.get_bot() >= self.wall.height):
-                    circ2.center.y -= 1
-                       
-                      
-                    
-                        
                 distance = self._get_distance_between_points(circ1.center, circ2.center)
 
 
