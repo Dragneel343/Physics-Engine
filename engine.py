@@ -117,8 +117,8 @@ class Engine:
                         if self.collision_dict[ ( type(obj1), type(obj2) ) ](obj1,obj2):
                             obj1.has_collided = True
                             obj2.has_collided = True
-            self.obj_wall_check(obj1)
             self.collision_dict[ ( type(obj1), Circle ) ](obj1,self.userobject)
+            self.obj_wall_check(obj1)
         self.obj_wall_check(self.userobject)
 
 
@@ -132,6 +132,15 @@ class Engine:
         # Check vertical collision
         if ( (obj1.get_bot() >= self.wall.height) and (obj1.velocity.dy < 0) ) or ( (obj1.get_top() <= 0) and (obj1.velocity.dy > 0)):
             obj1.on_wall_collision(col_type='v', wall=self.wall)
+        
+        while (obj1.get_left() <= 0):
+            obj1.center.x += 1
+        while (obj1.get_right() >= self.wall.width):
+            obj1.center.x -= 1
+        while (obj1.get_top() <= 0):
+            obj1.center.y += 1
+        while (obj1.get_bot() >= self.wall.height):
+            obj1.center.y -= 1
 
     def poly_poly_check(self, poly1, poly2):
         # Collision check between two polygons
@@ -231,10 +240,40 @@ class Engine:
         if distance <= circ1.radius + circ2.radius:
         #If circles are colliding
             while distance < circ1.radius + circ2.radius:
-                circ1.center.x = circ1.center.x - 1
-                circ2.center.x = circ2.center.x + 1
-                circ1.center.y = circ1.center.y - 1
-                circ2.center.y = circ2.center.y + 1
+                if circ1.center.x > circ2.center.x:
+                    circ1.center.x = circ1.center.x + 1
+                    circ2.center.x = circ2.center.x - 1
+                else:
+                    circ1.center.x = circ1.center.x - 1
+                    circ2.center.x = circ2.center.x + 1
+                if circ1.center.y > circ2.center.y:
+                    circ1.center.y = circ1.center.y + 1
+                    circ2.center.y = circ2.center.y - 1
+                else:
+                    circ1.center.y = circ1.center.y + 1
+                    circ2.center.y = circ2.center.y - 1
+                    
+                while (circ1.get_left() <= 0):
+                    circ1.center.x += 1
+                while (circ1.get_right() >= self.wall.width):
+                    circ1.center.x -= 1
+                while (circ1.get_top() <= 0):
+                    circ1.center.y += 1
+                while (circ1.get_bot() >= self.wall.height):
+                    circ1.center.y -= 1
+                    
+                while (circ2.get_left() <= 0):
+                    circ2.center.x += 1
+                while (circ2.get_right() >= self.wall.width):
+                    circ2.center.x -= 1
+                while (circ2.get_top() <= 0):
+                    circ2.center.y += 1
+                while (circ2.get_bot() >= self.wall.height):
+                    circ2.center.y -= 1
+                       
+                      
+                    
+                        
                 distance = self._get_distance_between_points(circ1.center, circ2.center)
 
 
